@@ -1,13 +1,249 @@
 body {
-  margin: 0;
+  margin: 40;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #282c34;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+.logo{
+  animation: rotation 2s infinite linear;
+  background-color: red;
+}
+
+#mainboard{
+  position: absolute;
+  text-align: center;
+  align-items: center;
+  align-items: center;
+  top: 8%;
+}
+#tasbar{
+  background-color: #282c34;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+#tasbar button{
+  width: 100px;
+  height: 10%;
+  margin: 1px;
+  background-color:#282c34;
+  border: none;
+  color: white;
+}
+#tasbar button:hover{
+  background-color:#72A33A;
+}
+
+/* ---------------------------> Header <------------------------ */
+#header{
+  background-color: #4D6F94;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 8%;
+}
+#header img {
+  position: absolute;
+  height: 100%;
+}
+#header .headermain{
+position: absolute;
+text-align: center;
+width: 80%;
+left: 8%;
+padding: 4px;
+}
+#headertitle{
+  font-weight: 500;
+  font-family:'Times New Roman', Times, serif;
+  color: aliceblue;
+  font-size: 20px;
+}
+#headersubtitle{
+  font-weight: 100;
+    font-family: 'Times New Roman';
+    color: aliceblue;
+    font-size: 18px;
+}
+#headerright{
+  color: aliceblue;
+  position: absolute;
+  text-align: right;
+  align-items: center;
+  top: 5px;
+  right: 1%;
+  width: 10%;
+}
+
+/* --------------------------------> Pgn view <-----------------------*/
+#pgnlistmoves{
+  background-color: #2e343f;
+  color: white;
+  position: fixed;
+  top: 8%;
+  right: 0;
+  width: 20%;
+  height: 85%;
+}
+#pgnlistmoveheader{
+  color:burlywood;
+}
+#pgnlistmovebody{
+  background-color: #2e343f;
+  color: white;
+  height: 100%;
+  overflow: scroll;
+}
+#pgnlistmoves table{
+  width: 100%;
+}
+
+/* --------------------------------> list game view <----------------------------------*/
+/*  Listgame*/
+#listgameround{
+  background-color: #282c34;
+  text-align: center;
+  color: white;
+  height: 30px;
+}
+#listgameround button{
+  /* background-color: #282c54; */
+  border-top: none;
+  border-bottom: none;
+  margin: 1px;
+  color: white;
+  text-align: center;
+  width: 80px;
+}
+#listgameround button:hover{
+  background-color: #72A33A;
+}
+#listgameround button:focus{
+  background-color: chocolate;
+}
+
+#listgamedatahead{
+  width: 100%;
+}
+
+.roundselected{
+  background-color: #72A33A;
+}
+.roundnonselect{
+  background-color: #282c54;
+}
+.listgame{
+  position: relative;
+  border-bottom:  1px solid #2E505F;
+  color: black;
+}
+.listgameselected{
+  position: relative;
+  border-bottom:  1px solid #2E505F;
+  background-color: #4D6F94;
+  color: aqua;
+}
+.listgamenonselect{
+  position: relative;
+  border-bottom:  1px solid #2E505F;
+  background-color: #282c34;
+  color: aqua;
+}
+.listgamenonselect:hover{
+  color: white;
+}
+.listgamenonselect button{
+  border-bottom:  1px solid #2E505F;
+  background-color: transparent;
+  font-size: large;
+  border: none;
+  color: aqua;
+  width: 100%;
+}
+.listgamenonselect button:hover{
+  border-bottom:  1px solid #2E505F;
+  background-color: transparent;
+  font-size: large;
+  border: none;
+  color: white;
+}
+.listgameselected button{
+  border-bottom:  1px solid #2E505F;
+  background-color: transparent;
+  font-size: large;
+  border: none;
+  color: white;
+  width: 100%;
+}
+.listgameselected{
+  border-bottom:  1px solid #2E505F;
+  font-size: large;
+  border: none;
+  color: white;
+}
+
+
+
+#headmoves{
+  background-color: #3D3B39;
+  color: #D4D3D3;
+}
+.pgnmove{
+  font-size: 20px;
+  color:aquamarine;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.pgnmove:hover{
+  color:white;
+  background-color: blueviolet;
+}
+.pgnmove:focus{
+  background-color: #72A33A;
+}
+#player{
+  background-color: #282c34;
+  color:white;
+  position: fixed;
+  top:80px;
+  left: 0;
+  width: 20%;
+  height: 80%;
+}
+#playerA{
+  background-color: #81898C;
+  color:white;
+  top:80px;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  text-align: center;
+}
+#playerB{
+  background-color: black;
+  color:white;
+  top:80px;
+  left: 0;
+  width: 100%;
+  height: 50%;
+}
+
+
+.headtitle {
+  color:blue;
+  background-color: red;
 }
