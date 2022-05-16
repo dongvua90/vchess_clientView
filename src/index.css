@@ -215,6 +215,9 @@ padding: 4px;
 .pgnmove:focus{
   background-color: #72A33A;
 }
+.pgnmove.active {
+  background-color: #ff0000;
+}
 #player{
   background-color: #282c34;
   color:white;
