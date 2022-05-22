@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import Board from './Components/Board';
 import './index.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
 // import axios from 'axios';
 // import Board2 from './Components/Board2'
 

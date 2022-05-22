@@ -22,8 +22,6 @@ function getJSON() {
 }
 
 function Board() {
-  const [sqsize, setSqSize] = useState(window.innerHeight / 12);
-  const [flip, setFlip] = useState(false);
   const [mainfen, setFen] = useState("rnbqkbnrpppppppp--------------------------------PPPPPPPPRNBQKBNR");
   const [nameTournament, setNameTournament] = useState("Tournament");
   const [currentGame, setCurrentGame] = useState(0);
@@ -114,52 +112,45 @@ function Board() {
     let count = 0;
     for (let i = 0; i < 8; i++) {
       for (let j = 0; j < 8; j++) {
-        if (differentFenCharIndex.includes(count)) {
-          dat.push(<Rect x={sqsize * j} y={sqsize * i} width={sqsize} height={sqsize} fill='#CDD26A' />)
-        } else {
-          if ((i + j) % 2 === 0) {
-            dat.push(<Rect x={sqsize * j} y={sqsize * i} width={sqsize} height={sqsize} fill='#F0D9B5' />)
+        let ch = mainfen.charAt(count)
+        let img = ''
+        switch (ch) {
+          case 'k': img = "/Images/bK.png"; break;
+          case 'q': img = "/Images/bQ.png"; break;
+          case 'b': img = "/Images/bB.png"; break;
+          case 'n': img = "/Images/bN.png"; break;
+          case 'r': img = "/Images/bR.png"; break;
+          case 'p': img = "/Images/bP.png"; break;
+          case 'K': img = "/Images/wK.png"; break;
+          case 'Q': img = "/Images/wQ.png"; break;
+          case 'B': img = "/Images/wB.png"; break;
+          case 'N': img = "/Images/wN.png"; break;
+          case 'R': img = "/Images/wR.png"; break;
+          case 'P': img = "/Images/wP.png"; break;
+          default: img = ''; break;
+        }
+        if (img == '') {
+          if (differentFenCharIndex.includes(count)) {
+            dat.push(<div class="cell active float-left"><span></span></div>)
           } else {
-            dat.push(<Rect x={sqsize * j} y={sqsize * i} width={sqsize} height={sqsize} fill='#B58863' />)
+            if (i % 2 == 0) {
+              dat.push(<div class="cell row-even float-left"><span></span></div>)
+            } else {
+              dat.push(<div class="cell row-odd float-left"><span></span></div>)
+            }
+          }
+        } else {
+          if (differentFenCharIndex.includes(count)) {
+            dat.push(<div class="cell active float-left"><span><img src={img} /></span></div>)
+          } else {
+            if (i % 2 == 0) {
+              dat.push(<div class="cell row-even float-left"><span><img src={img} /></span></div>)
+            } else {
+              dat.push(<div class="cell row-odd float-left"><span><img src={img} /></span></div>)
+            }
           }
         }
         count++;
-      }
-    }
-    for (let i = 0; i < 8; i++) {
-      dat.push(<Text text={flip ? (i + 1) : (8 - i)} x={sqsize * 8 - 14} y={sqsize * i + 5} fill={(i % 2) ? '#B58863' : '#F0D9B5'} />)
-      dat.push(<Text text={String.fromCharCode(flip ? 104 - i : i + 97)} x={sqsize * (i + 1) - 14} y={sqsize * 8 - 14} fill={(i % 2) ? '#B58863' : '#F0D9B5'} />)
-    }
-    return dat;
-  }
-
-  const drawPieces = () => {
-    const dat = [];
-    for (let i = 0; i < 64; i++) {
-      let ch = mainfen.charAt(i)
-      if (ch != '-') {
-        const imag = new window.Image();
-        switch (ch) {
-          case 'k': imag.src = "./Images/bK.png"; break;
-          case 'q': imag.src = "./Images/bQ.png"; break;
-          case 'b': imag.src = "./Images/bB.png"; break;
-          case 'n': imag.src = "./Images/bN.png"; break;
-          case 'r': imag.src = "./Images/bR.png"; break;
-          case 'p': imag.src = "./Images/bP.png"; break;
-          case 'K': imag.src = "./Images/wK.png"; break;
-          case 'Q': imag.src = "./Images/wQ.png"; break;
-          case 'B': imag.src = "./Images/wB.png"; break;
-          case 'N': imag.src = "./Images/wN.png"; break;
-          case 'R': imag.src = "./Images/wR.png"; break;
-          case 'P': imag.src = "./Images/wP.png"; break;
-        }
-        dat.push(<Image
-          image={imag}
-          y={parseInt(i / 8) * sqsize}
-          x={parseInt(i % 8) * sqsize}
-          width={sqsize}
-          height={sqsize}
-        />)
       }
     }
     return dat;
@@ -221,14 +212,6 @@ function Board() {
     setCurrentMove(crmove);
   }
 
-  const rotateBoard = () => {
-    console.log("rotateBoard");
-  }
-
-  const fullScreen = () => {
-    console.log("fullscreen");
-  }
-
   function callmove(number, iswhite) {
     let crmove = number + iswhite;
     setCurrentMove(crmove);
@@ -251,36 +234,72 @@ function Board() {
         listgame={listGame}
         changeselectgame={callSelectedGame}
       />
-      <Stage x={(window.innerWidth - sqsize * 8) / 2} width={((window.innerWidth - sqsize * 8) / 2) + sqsize * 8} height={sqsize * 8} style={{ position: 'relative', textAlign: 'center' }}>
-        <Layer>
-          {drawboard()}
-          {drawPieces()}
-        </Layer>
-      </Stage>
 
-      <div id="player">
-        <div id="playerA">
-          <img src="/Icon/emoji-smile.svg" style={{ padding: 20 }}></img>
-          <h2>01:34:34</h2>
+      <main id="content" class="content clearfix">
+        <div class="content-left float-left">
+          <div class="player">
+            <div class="player-wrapper text-center">
+              <img src="/Images/player-1.jpg" alt="Ervan, Mohamard" class="avatar" />
+              <p class="fullname">Ervan, Mohamard</p>
+              <div class="secondary">
+                <img src="/Images/flag.jpg" alt="United Kingdom" class="national" align="center" />
+                <span class="score">2048</span>
+              </div>
+              <div class="time">
+                <span>1:33:07</span>
+              </div>
+            </div>
+            <div class="main-score text-center">1/2</div>
+          </div>
+          <div class="player text-center">
+            <div class="player-wrapper text-center">
+              <div class="time">
+                <span>1:30:40</span>
+              </div>
+              <img src="/Images/player-2.jpg" alt="Ervan, Mohamard" class="avatar" />
+              <p class="fullname">Tran Tuan Minh</p>
+              <div class="secondary">
+                <img src="/Images/flag.jpg" alt="United Kingdom" class="national" align="center" />
+                <span class="score">2048</span>
+              </div>
+            </div>
+            <div class="main-score text-center">1/2</div>
+          </div>
         </div>
-        <div id="playerB">
-          <img src="/Icon/emoji-sunglasses.svg" style={{ padding: 20 }}></img>
-          <h2>00:35:23</h2>
+        <div class="content-center float-left">
+          <div class="wrapper">
+            <div class="board">
+              <div class="board-wrapper" style={{ backgroundImage: `url('/Images/board-bg.jpg')` }}>
+                <div class="board-content">
+                  {drawboard()}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
+        <div class="content-right float-left">
+          <ViewMoves myonclick={callmove} moves={listmoves} currentMove={currentMove} />
 
-      <ViewMoves myonclick={callmove} moves={listmoves} currentMove={currentMove} />
-
-      <div id="tasbar">
-        <button id="btn-begin-move" onClick={() => beginMove()}><img src="./Icon/skip-backward-fill.svg" /></button>
-        <button id="btn-back-move" onClick={() => backMove()}><img src="./Icon/skip-start-fill.svg" /></button>
-        <button id="btn-next-move" onClick={() => nextMove()}><img src="./Icon/skip-end-fill.svg" /></button>
-        <button id="btn-end-move" onClick={() => endMove()}><img src="./Icon/skip-forward-fill.svg" /></button>
-        <button onClick={() => nextGame()}><img src="./Icon/sort-up.svg" /></button>
-        <button onClick={() => backGame()}><img src="./Icon/sort-down.svg" /></button>
-        <button onClick={() => rotateBoard()}><img src="./Icon/arrow-repeat.svg" /></button>
-        <button onClick={() => fullScreen()}><img src="./Icon/arrows-fullscreen.svg" /></button>
-      </div>
+          <p class="score text-center">0 - 1</p>
+          <div class="function text-center clearfix">
+            <div class="item float-left">
+              <button type="button" id="btn-begin-move" onClick={() => beginMove()}><i class="fas fa-fast-backward"></i></button>
+            </div>
+            <div class="item float-left">
+              <button type="button" id="btn-back-move" onClick={() => backMove()}><i class="fas fa-caret-left"></i></button>
+            </div>
+            <div class="item float-left">
+              <span class="current-state">{currentMove === listmoves.length ? 'Live' : listmoves[currentMove - 1]}</span>
+            </div>
+            <div class="item float-left">
+              <button type="button" id="btn-next-move" onClick={() => nextMove()}><i class="fas fa-caret-right"></i></button>
+            </div>
+            <div class="item float-left">
+              <button type="button" id="btn-end-move" onClick={() => endMove()}><i class="fas fa-fast-forward"></i></button>
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
   );
 }

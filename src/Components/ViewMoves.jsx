@@ -13,8 +13,8 @@ class ViewMoves extends React.Component {
     var dat = [];
     let numberMove = 1;
     for (let i = 0; i < this.props.moves.length - 1; i++) {
-      let cssClassWhite = "pgnmove";
-      let cssClassBlack = "pgnmove";
+      let cssClassWhite = "";
+      let cssClassBlack = "";
       if (this.props.currentMove - 1 === i) {
         cssClassWhite += " active";
       }
@@ -23,25 +23,22 @@ class ViewMoves extends React.Component {
       }
 
       dat.push(
-        <tr class="movestr">
-          <td>{numberMove++}.</td>
-          <td><button class={cssClassWhite} onClick={() => this.gotoMove(i, 0)}>{this.props.moves[i++]}</button></td>
-          <td><button class={cssClassBlack} onClick={() => this.gotoMove(i, 1)}>{this.props.moves[i]}</button></td>
+        <tr>
+          <td class="text-center">{numberMove++}.</td>
+          <td class="text-center"><span class={cssClassWhite} onClick={() => this.gotoMove(i, 0)}>{this.props.moves[i++]}</span></td>
+          <td class="text-center"><span class={cssClassBlack} onClick={() => this.gotoMove(i, 1)}>{this.props.moves[i]}</span></td>
         </tr>
       );
     }
 
     return (
-      <div id="pgnlistmoves">
-        <table >
-          <tr id="pgnlistmoveheader">
-            <th width="12%">No.</th>
-            <th width="40%">White</th>
-            <th width="40%">Black</th>
-            <th></th>
-          </tr>
-        </table>
-        <div id="pgnlistmovebody">
+      <div>
+        <div class="header text-center clearfix">
+          <div class="item float-left">No.</div>
+          <div class="item float-left">White</div>
+          <div class="item float-left">Black</div>
+        </div>
+        <div class="table-data scroll">
           <table>
             {dat}
           </table>
