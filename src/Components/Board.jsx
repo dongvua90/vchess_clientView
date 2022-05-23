@@ -1,41 +1,61 @@
 import React, { useRef, useState, useEffect, Component } from 'react';
-import { Stage, Rect, Layer, Circle, Text, Image } from 'react-konva';
 import Header from './Header';
 import ViewMoves from './ViewMoves';
-import axios from 'axios';
 import ChessUtil from './ChessUtil'
-
-function getJSON() {
-  let url = new URL(window.location.href);
-  let id = url.searchParams.get("id");
-  console.log("param:" + id);
-  var urldatabase = "http://localhost:5000/tournament?id=" + id;
-  // To make the function blocking we manually create a Promise.
-  return new Promise(function (resolve) {
-    axios.get(urldatabase)
-      .then(function (json) {
-        // The data from the request is available in a .then block
-        // We return the result using resolve.
-        resolve(json);
-      });
-  });
-}
+import { initializeApp } from 'firebase/app'
+import { getDatabase, ref, child, get, onValue } from "firebase/database";
 
 function Board() {
   const [mainfen, setFen] = useState("rnbqkbnrpppppppp--------------------------------PPPPPPPPRNBQKBNR");
-  const [nameTournament, setNameTournament] = useState("Tournament");
   const [currentGame, setCurrentGame] = useState(0);
   const [currentRound, setCurrentRound] = useState(0);
   const [currentMove, setCurrentMove] = useState(0);
   const [tour, setTour] = useState();
   const [listmoves, setListMoves] = useState([]);
   const [listGame, setListGame] = useState([]);
+  const [playerBlack, setPlayerBlack] = useState('');
+  const [playerWhite, setPlayerWhite] = useState('');
+  const [result, setResult] = useState([0,0]);
 
   useEffect(() => {
-    console.log("ee1111")
-    getJSON().then(function (res) {
-      setTour(res.data);
-    });
+    const firebaseConfig = {
+      apiKey: "AIzaSyClxIjgGdpMGF3HcHMnydonZe24q2V5Qzc",
+      authDomain: "testrealtime-5579d.firebaseapp.com",
+      databaseURL: "https://testrealtime-5579d-default-rtdb.firebaseio.com",
+      projectId: "testrealtime-5579d",
+      storageBucket: "testrealtime-5579d.appspot.com",
+      messagingSenderId: "819449395660",
+      appId: "1:819449395660:web:ea00022b41357579a34569",
+      measurementId: "G-PNTXWVRBVP"
+    };
+    const app = initializeApp(firebaseConfig)
+    const db = getDatabase(app)
+
+    /*const dbRef = ref(db)
+    get(child(dbRef, 'Tournaments')).then((snapshot) => {
+      if (snapshot.exists()) {
+        console.log(snapshot.val())
+        setTour(snapshot.val())
+      } else {
+        console.log("No data available")
+      }
+    }).catch((error) => {
+      console.error(error)
+    })*/
+
+    const dbRef = ref(db, 'Tournament')
+    onValue(dbRef, (snapshot) => {
+      setTour(snapshot.val())
+      console.log(snapshot.val())
+    })
+
+    const dbRef2 = ref(db, `Tournament/Rounds/${currentRound}/Games/${currentMove}/Fens`)
+    onValue(dbRef2, (snapshot) => {
+      console.log(snapshot.val())
+      setTimeout(function() {
+        document.getElementById("btn-end-move").click()
+      }, 500)
+    })
 
     const handle = (event) => {
       switch (event.keyCode) {
@@ -60,10 +80,12 @@ function Board() {
 
   useEffect(() => {
     if (tour) {
-      setNameTournament(tour.name);
-      setFen(tour.rounds[currentRound].games[currentGame].fens[currentMove]);
-      extractMoves(tour.rounds[currentRound].games[currentGame].fens);
+      setFen(tour.Rounds[currentRound].Games[currentGame].Fens[currentMove]);
+      extractMoves(tour.Rounds[currentRound].Games[currentGame].Fens);
       exteractListGame();
+      setPlayerBlack(getUserInfoByFullName(tour.Rounds[currentRound].Games[currentGame].Black));
+      setPlayerWhite(getUserInfoByFullName(tour.Rounds[currentRound].Games[currentGame].White));
+      setResult(getResult(tour.Rounds[currentRound].Games[currentGame].resuft));
     }
   }, [tour]);
 
@@ -77,12 +99,13 @@ function Board() {
 
   const exteractListGame = () => {
     let list = [];
-    for (let i = 0; i < tour.rounds.length; i++) {
+    for (let i = 0; i < tour.Rounds.length; i++) {
       let contai = [];
-      for (let j = 0; j < tour.rounds[i].games.length; j++) {
+      for (let j = 0; j < tour.Rounds[i].Games.length; j++) {
         contai.push({
-          white: tour.rounds[i].games[j].playwhite,
-          black: tour.rounds[i].games[j].playblack
+          white: tour.Rounds[i].Games[j].White,
+          black: tour.Rounds[i].Games[j].Black,
+          result: getResult(tour.Rounds[i].Games[j].resuft)
         });
       }
       list.push(contai);
@@ -96,7 +119,7 @@ function Board() {
     let moveDisplay = '';
     let lastFen = '';
     if (currentMove > 0) {
-      lastFen = tour.rounds[currentRound].games[currentGame].fens[currentMove - 1];
+      lastFen = tour.Rounds[currentRound].Games[currentGame].Fens[currentMove - 1];
       moveDisplay = listmoves[currentMove - 1];
     }
 
@@ -158,11 +181,11 @@ function Board() {
 
   const nextMove = () => {
     let crmove = currentMove + 1;
-    if (crmove >= tour.rounds[currentRound].games[currentGame].fens.length) {
-      crmove = tour.rounds[currentRound].games[currentGame].fens.length - 1;
+    if (crmove >= tour.Rounds[currentRound].Games[currentGame].Fens.length) {
+      crmove = tour.Rounds[currentRound].Games[currentGame].Fens.length - 1;
     }
     setCurrentMove(crmove);
-    setFen(tour.rounds[currentRound].games[currentGame].fens[crmove]);
+    setFen(tour.Rounds[currentRound].Games[currentGame].Fens[crmove]);
   }
 
   const backMove = () => {
@@ -171,66 +194,43 @@ function Board() {
       crmove = 0;
     }
     setCurrentMove(crmove);
-    setFen(tour.rounds[currentRound].games[currentGame].fens[crmove]);
+    setFen(tour.Rounds[currentRound].Games[currentGame].Fens[crmove]);
   }
 
   const beginMove = () => {
     setCurrentMove(0);
-    setFen(tour.rounds[currentRound].games[currentGame].fens[0]);
+    setFen(tour.Rounds[currentRound].Games[currentGame].Fens[0]);
   }
 
   const endMove = () => {
     // console.log("endMove");
-    let crmove = tour.rounds[currentRound].games[currentGame].fens.length - 1;
+    let crmove = tour.Rounds[currentRound].Games[currentGame].Fens.length - 1;
     setCurrentMove(crmove);
-    setFen(tour.rounds[currentRound].games[currentGame].fens[crmove]);
-  }
-
-  const nextGame = () => {
-    // console.log("nextGame");
-    let numbergame = currentGame + 1;
-    if (numbergame >= (tour.rounds[currentRound].games.length)) {
-      numbergame = 0;
-    }
-    let crmove = tour.rounds[currentRound].games[numbergame].fens.length - 1;
-    setCurrentGame(numbergame);
-    setFen(tour.rounds[currentRound].games[numbergame].fens[crmove]);
-    extractMoves(tour.rounds[currentRound].games[numbergame].fens);
-    setCurrentMove(crmove);
-  }
-
-  const backGame = () => {
-    // console.log("backGame");
-    let numbergame = currentGame - 1;
-    if (numbergame < 0) {
-      numbergame = (tour.rounds[currentRound].games.length) - 1;
-    }
-    let crmove = tour.rounds[currentRound].games[numbergame].fens.length - 1;
-    setCurrentGame(numbergame);
-    setFen(tour.rounds[currentRound].games[numbergame].fens[crmove]);
-    extractMoves(tour.rounds[currentRound].games[numbergame].fens);
-    setCurrentMove(crmove);
+    setFen(tour.Rounds[currentRound].Games[currentGame].Fens[crmove]);
   }
 
   function callmove(number, iswhite) {
     let crmove = number + iswhite;
     setCurrentMove(crmove);
-    setFen(tour.rounds[currentRound].games[currentGame].fens[crmove]);
+    setFen(tour.Rounds[currentRound].Games[currentGame].Fens[crmove]);
   }
 
   const callSelectedGame = (idround, idgame) => {    // handler chọn ván game
     console.log("CallSelected:" + idround + " game:" + idgame)
-    let crmove = tour.rounds[idround].games[idgame].fens.length - 1;
+    let crmove = tour.Rounds[idround].Games[idgame].Fens.length - 1;
     setCurrentRound(idround);
     setCurrentGame(idgame);
-    setFen(tour.rounds[idround].games[idgame].fens[crmove]);
-    extractMoves(tour.rounds[idround].games[idgame].fens);
+    setFen(tour.Rounds[idround].Games[idgame].Fens[crmove]);
+    extractMoves(tour.Rounds[idround].Games[idgame].Fens);
     setCurrentMove(crmove);
+    setPlayerBlack(getUserInfoByFullName(tour.Rounds[idround].Games[idgame].Black));
+    setPlayerWhite(getUserInfoByFullName(tour.Rounds[idround].Games[idgame].White));
+    setResult(getResult(tour.Rounds[idround].Games[idgame].resuft));
   }
 
   return (
     <div id="mainboard">
-      <Header tourname={nameTournament}
+      <Header
         listgame={listGame}
         changeselectgame={callSelectedGame}
       />
@@ -239,31 +239,31 @@ function Board() {
         <div class="content-left float-left">
           <div class="player">
             <div class="player-wrapper text-center">
-              <img src="/Images/player-1.jpg" alt="Ervan, Mohamard" class="avatar" />
-              <p class="fullname">Ervan, Mohamard</p>
+              <img src={playerBlack.avatar} alt={playerBlack.fullName} class="avatar" />
+              <p class="fullname">{playerBlack.fullName}</p>
               <div class="secondary">
-                <img src="/Images/flag.jpg" alt="United Kingdom" class="national" align="center" />
-                <span class="score">2048</span>
+                <img src={playerBlack.national} alt="" class="national" align="center" />
+                {/* <span class="score">2048</span> */}
               </div>
               <div class="time">
-                <span>1:33:07</span>
+                <span>--:--:--</span>
               </div>
             </div>
-            <div class="main-score text-center">1/2</div>
+            <div class="main-score text-center">{result[1]}</div>
           </div>
           <div class="player text-center">
             <div class="player-wrapper text-center">
               <div class="time">
-                <span>1:30:40</span>
+                <span>--:--:--</span>
               </div>
-              <img src="/Images/player-2.jpg" alt="Ervan, Mohamard" class="avatar" />
-              <p class="fullname">Tran Tuan Minh</p>
+              <img src={playerWhite.avatar} alt={playerWhite.fullName} class="avatar" />
+              <p class="fullname">{playerWhite.fullName}</p>
               <div class="secondary">
-                <img src="/Images/flag.jpg" alt="United Kingdom" class="national" align="center" />
-                <span class="score">2048</span>
+                <img src={playerWhite.national} alt="" class="national" align="center" />
+                {/* <span class="score">2048</span> */}
               </div>
             </div>
-            <div class="main-score text-center">1/2</div>
+            <div class="main-score text-center">{result[0]}</div>
           </div>
         </div>
         <div class="content-center float-left">
@@ -280,7 +280,7 @@ function Board() {
         <div class="content-right float-left">
           <ViewMoves myonclick={callmove} moves={listmoves} currentMove={currentMove} />
 
-          <p class="score text-center">0 - 1</p>
+          <p class="score text-center">{result[0]} - {result[1]}</p>
           <div class="function text-center clearfix">
             <div class="item float-left">
               <button type="button" id="btn-begin-move" onClick={() => beginMove()}><i class="fas fa-fast-backward"></i></button>
@@ -302,6 +302,64 @@ function Board() {
       </main>
     </div>
   );
+}
+
+function getUserInfoByFullName(fullName) {
+  let userInfo = {
+    fullName: fullName,
+    avatar: '/Images/avatar/default-avatar.jpg',
+    national: '/Images/flag/vietnam.jpg'
+  }
+  switch (userInfo.fullName) {
+    case 'Nguyen Anh Dung':
+      userInfo.avatar = '/Images/avatar/nguyen-anh-dung.jpg';
+      userInfo.national = '/Images/flag/vietnam.jpg';
+      break;
+    case 'Pranav Anand':
+      userInfo.avatar = '/Images/avatar/pranav-anand.jpg';
+      userInfo.national = '/Images/flag/indian.jpg';
+      break;
+    case 'Nguyen Van Huy':
+      userInfo.avatar = '/Images/avatar/nguyen-van-huy.jpg';
+      userInfo.national = '/Images/flag/vietnam.jpg';
+      break;
+    case 'Bersamina Paulo':
+      userInfo.avatar = '/Images/avatar/bersamina-paulo.jpg';
+      userInfo.national = '/Images/flag/philippin.jpg';
+      break;
+    case 'Quizon Daniel':
+      userInfo.avatar = '/Images/avatar/quizon-daniel.jpg';
+      userInfo.national = '/Images/flag/philippin.jpg';
+      break;
+    case 'Setyaki Azarya Jodi':
+      userInfo.avatar = '/Images/avatar/setyaki-azarya-jodi.jpg';
+      userInfo.national = '/Images/flag/indonesia.jpg';
+      break;
+    case 'Tin Jingyao':
+      userInfo.avatar = '/Images/avatar/tin-jingyao.jpg';
+      userInfo.national = '/Images/flag/singapore.jpg';
+      break;
+    case 'Tran Tuan Minh':
+      userInfo.avatar = '/Images/avatar/tran-tuan-minh.jpg';
+      userInfo.national = '/Images/flag/vietnam.jpg';
+      break;
+    case 'Tran Minh Thang':
+      userInfo.avatar = '/Images/avatar/tran-minh-thang.jpg';
+      userInfo.national = '/Images/flag/vietnam.jpg';
+      break;
+    case 'Dang Hoang Son':
+      userInfo.avatar = '/Images/avatar/dang-hoang-son.jpg';
+      userInfo.national = '/Images/flag/vietnam.jpg';
+      break;
+    default:
+      break;
+  }
+
+  return userInfo
+}
+
+function getResult(result) {
+  return result.split('-');
 }
 
 export default Board;
