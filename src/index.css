@@ -194,6 +194,10 @@ h6 {
     padding: 5px;
 }
 
+#header .header-center .list-select select option {
+    color: #303030;
+}
+
 @media (min-width: 1400px) {
     #header .header-center .page-title {
         font-size: 1.5rem;

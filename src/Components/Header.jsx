@@ -4,6 +4,63 @@ import { Collapse } from 'bootstrap'
 import equal from 'fast-deep-equal'
 
 class Header extends React.Component {
+  state = {
+    toggle: false,
+    round: 0,
+    game: 0,
+    round_max: 0,
+    whitename: "",
+    blackname: "",
+  }
+
+  handlerRoundChange = (event) => {
+    let value = event.target.value
+    this.setState({
+      round: value,
+      whitename: this.props.listgame[value][this.state.game].white,
+      blackname: this.props.listgame[value][this.state.game].black,
+    })
+    this.props.changeselectgame(value, this.state.game);  // truyền thông số cho Parent
+  }
+
+  handlerGameChange = (event) => {
+    let value = event.target.value
+    this.setState({
+      game: value,
+      whitename: this.props.listgame[this.state.round][value].white,
+      blackname: this.props.listgame[this.state.round][value].black,
+    });
+    this.props.changeselectgame(this.state.round, value);  // truyền thông số cho Parent
+  }
+
+  componentDidUpdate(prevProps) {
+    if (!equal(this.props.listgame, prevProps.listgame)) {
+      this.setState({
+        whitename: this.props.listgame[0][0].white,
+        blackname: this.props.listgame[0][0].black,
+        round_max: this.props.listgame.length,
+      });
+    }
+  }
+  
+  roundbutton = (round_max) => {
+    var dat = [];
+    for (let i = 0; i < round_max; i++) {
+      dat.push(<option value={i}>Round {i + 1}</option>)
+    }
+    return dat;
+  }
+
+  listGameView = () => {
+    var dat = [];
+    if (this.state.round_max > 0) {
+      for (let i = 0; i < this.props.listgame[this.state.round].length; i++) {
+        dat.push(<option value={i}>White: {this.props.listgame[this.state.round][i].white} (0) - Black: {this.props.listgame[this.state.round][i].black} (0)</option>);
+      }
+    }
+    return dat
+  }
+
   render() {
     return (
       <header id="header" class="content">
@@ -18,13 +75,13 @@ class Header extends React.Component {
             <h1 class="page-title text-center">Hanoi GM and IM Chess Tournament 2022</h1>
             <div class="list-select clearfix">
               <div class="item float-left">
-                <select>
-                  <option value="">Select round...</option>
+                <select onChange={(event) => this.handlerRoundChange(event)}>
+                  {this.roundbutton(this.state.round_max)}
                 </select>
               </div>
               <div class="item float-left">
-                <select>
-                  <option value="">Select game...</option>
+                <select onChange={(event) => this.handlerGameChange(event)}>
+                  {this.listGameView()}
                 </select>
               </div>
             </div>
