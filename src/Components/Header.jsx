@@ -21,6 +21,7 @@ class Header extends React.Component {
       blackname: this.props.listgame[value][this.state.game].black,
     })
     this.props.changeselectgame(value, this.state.game);  // truyền thông số cho Parent
+    event.target.blur()
   }
 
   handlerGameChange = (event) => {
@@ -31,6 +32,7 @@ class Header extends React.Component {
       blackname: this.props.listgame[this.state.round][value].black,
     });
     this.props.changeselectgame(this.state.round, value);  // truyền thông số cho Parent
+    event.target.blur()
   }
 
   componentDidUpdate(prevProps) {
