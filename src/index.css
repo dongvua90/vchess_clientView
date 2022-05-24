@@ -441,6 +441,7 @@ h6 {
 #content .content-right {
     background-color: #00204b;
     color: #fff;
+    display: none;
 }
 
 #content .content-right .header {
@@ -461,9 +462,16 @@ h6 {
 }
 
 #content .content-right .table-data {
-    height: 70%;
+    min-height: 350px;
+    height: 60vh;
     overflow-y: scroll;
     margin-bottom: 1rem;
+}
+
+@media (min-width: 1400px) {
+    #content .content-right .table-data {
+        min-height: 510px;
+    }
 }
 
 #content .content-right .table-data table {

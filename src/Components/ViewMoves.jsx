@@ -12,7 +12,7 @@ class ViewMoves extends React.Component {
   render() {
     var dat = [];
     let numberMove = 1;
-    for (let i = 0; i < this.props.moves.length - 1; i++) {
+    for (let i = 0; i < this.props.moves.length; i++) {
       let cssClassWhite = "";
       let cssClassBlack = "";
       if (this.props.currentMove - 1 === i) {
@@ -22,13 +22,23 @@ class ViewMoves extends React.Component {
         cssClassBlack += " active";
       }
 
-      dat.push(
-        <tr>
-          <td class="text-center">{numberMove++}.</td>
-          <td class="text-center"><span class={cssClassWhite} onClick={() => this.gotoMove(i, 0)}>{this.props.moves[i++]}</span></td>
-          <td class="text-center"><span class={cssClassBlack} onClick={() => this.gotoMove(i, 1)}>{this.props.moves[i]}</span></td>
-        </tr>
-      );
+      if (this.props.moves[i + 1] !== undefined) {
+        dat.push(
+          <tr>
+            <td class="text-center">{numberMove++}.</td>
+            <td class="text-center"><span class={cssClassWhite} onClick={() => this.gotoMove(i, 0)}>{this.props.moves[i++]}</span></td>
+            <td class="text-center"><span class={cssClassBlack} onClick={() => this.gotoMove(i, 1)}>{this.props.moves[i]}</span></td>
+          </tr>
+        );
+      } else {
+        dat.push(
+          <tr>
+            <td class="text-center">{numberMove++}.</td>
+            <td class="text-center"><span class={cssClassWhite} onClick={() => this.gotoMove(i, 0)}>{this.props.moves[i++]}</span></td>
+            <td class="text-center"><span class={cssClassBlack}>---</span></td>
+          </tr>
+        );
+      }
     }
 
     return (

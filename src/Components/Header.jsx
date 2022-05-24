@@ -57,7 +57,7 @@ class Header extends React.Component {
     var dat = [];
     if (this.state.round_max > 0) {
       for (let i = 0; i < this.props.listgame[this.state.round].length; i++) {
-        dat.push(<option value={i}>White: {this.props.listgame[this.state.round][i].white} ({this.props.listgame[this.state.round][i].result[0]}) - ({this.props.listgame[this.state.round][i].result[1]}) Black: {this.props.listgame[this.state.round][i].black}</option>);
+        dat.push(<option value={i}>{this.props.listgame[this.state.round][i].white} ({this.props.listgame[this.state.round][i].result[0]}) - ({this.props.listgame[this.state.round][i].result[1]}) {this.props.listgame[this.state.round][i].black}</option>);
       }
     }
     return dat

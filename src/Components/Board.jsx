@@ -57,7 +57,7 @@ function Board() {
       }, 500)
     })
 
-    const handle = (event) => {
+    /*const handle = (event) => {
       switch (event.keyCode) {
         case 37:
           document.getElementById("btn-back-move").click();
@@ -75,7 +75,7 @@ function Board() {
           break;
       }
     };
-    window.addEventListener('keyup', handle);
+    window.addEventListener('keyup', handle);*/
   }, []);
 
   useEffect(() => {
