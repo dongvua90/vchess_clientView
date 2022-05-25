@@ -6,7 +6,7 @@ import equal from 'fast-deep-equal'
 class Header extends React.Component {
   state = {
     toggle: false,
-    round: 0,
+    round: 1,
     game: 0,
     round_max: 0,
     whitename: "",
@@ -48,7 +48,11 @@ class Header extends React.Component {
   roundbutton = (round_max) => {
     var dat = [];
     for (let i = 0; i < round_max; i++) {
-      dat.push(<option value={i}>Round {i + 1}</option>)
+      if (i == this.state.round) {
+        dat.push(<option value={i} selected="selected">Round {i + 1}</option>)
+      } else {
+        dat.push(<option value={i}>Round {i + 1}</option>)
+      }
     }
     return dat;
   }
@@ -90,7 +94,7 @@ class Header extends React.Component {
           </div>
         </div>
         <div class="header-right content-right">
-          <p class="label-date">Date: 2022.05.11</p>
+          <p class="label-date">Date: 2022.05.25</p>
         </div>
       </header>
     );

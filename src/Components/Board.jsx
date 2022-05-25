@@ -8,7 +8,7 @@ import { getDatabase, ref, child, get, onValue } from "firebase/database";
 function Board() {
   const [mainfen, setFen] = useState("rnbqkbnrpppppppp--------------------------------PPPPPPPPRNBQKBNR");
   const [currentGame, setCurrentGame] = useState(0);
-  const [currentRound, setCurrentRound] = useState(0);
+  const [currentRound, setCurrentRound] = useState(1);
   const [currentMove, setCurrentMove] = useState(0);
   const [tour, setTour] = useState();
   const [listmoves, setListMoves] = useState([]);
@@ -57,7 +57,7 @@ function Board() {
       }, 500)
     })
 
-    /*const handle = (event) => {
+    const handle = (event) => {
       switch (event.keyCode) {
         case 37:
           document.getElementById("btn-back-move").click();
@@ -75,7 +75,7 @@ function Board() {
           break;
       }
     };
-    window.addEventListener('keyup', handle);*/
+    window.addEventListener('keyup', handle);
   }, []);
 
   useEffect(() => {
@@ -269,9 +269,27 @@ function Board() {
         <div class="content-center float-left">
           <div class="wrapper">
             <div class="board">
+              <div class="player clearfix">
+                <div class="avatar float-left">
+                  <img src={playerBlack.avatar} alt={playerBlack.fullName} />
+                </div>
+                <div class="main-info">
+                  <p class="fullname">{playerBlack.fullName}</p>
+                  <img src={playerBlack.national} alt="" class="national" />
+                </div>
+              </div>
               <div class="board-wrapper" style={{ backgroundImage: `url('/Images/board-bg.jpg')` }}>
                 <div class="board-content">
                   {drawboard()}
+                </div>
+              </div>
+              <div class="player clearfix">
+                <div class="avatar float-left">
+                  <img src={playerWhite.avatar} alt={playerWhite.fullName} />
+                </div>
+                <div class="main-info">
+                  <p class="fullname">{playerWhite.fullName}</p>
+                  <img src={playerWhite.national} alt="" class="national" />
                 </div>
               </div>
             </div>
@@ -281,7 +299,7 @@ function Board() {
           <ViewMoves myonclick={callmove} moves={listmoves} currentMove={currentMove} />
 
           <p class="score text-center">{result[0]} - {result[1]}</p>
-          <div class="function text-center clearfix">
+          <div class="list-function text-center clearfix">
             <div class="item float-left">
               <button type="button" id="btn-begin-move" onClick={() => beginMove()}><i class="fas fa-fast-backward"></i></button>
             </div>
@@ -300,6 +318,25 @@ function Board() {
           </div>
         </div>
       </main>
+      <footer id="footer">
+        <div class="list-function text-center clearfix">
+          <div class="item float-left">
+            <button type="button" onClick={() => beginMove()}><i class="fas fa-fast-backward"></i></button>
+          </div>
+          <div class="item float-left">
+            <button type="button" onClick={() => backMove()}><i class="fas fa-caret-left"></i></button>
+          </div>
+          <div class="item float-left">
+            <span class="current-state">{currentMove === listmoves.length ? 'Live' : listmoves[currentMove - 1]}</span>
+          </div>
+          <div class="item float-left">
+            <button type="button" onClick={() => nextMove()}><i class="fas fa-caret-right"></i></button>
+          </div>
+          <div class="item float-left">
+            <button type="button" onClick={() => endMove()}><i class="fas fa-fast-forward"></i></button>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
