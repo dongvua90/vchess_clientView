@@ -25,7 +25,7 @@ exports.getmove = function(oldFen,CurrentFen){
     let sqFrom,sqTo;
     let piecemove;
     let iskill;
-    for(let i =63;i>=0;i--){
+    for(let i =0;i<64;i++){
         if(oldFen.charAt(i)!=CurrentFen.charAt(i)){
             change[numberChange]=i;
             numberChange++;          
@@ -82,15 +82,15 @@ exports.getmove = function(oldFen,CurrentFen){
     }else if(numberChange==4){ // nhập thành
         sqTo = -1;
         sqFrom=-1;
-        for(let i=0;i<3;i++){
+        for(let i=0;i<4;i++){
             if(CurrentFen.charAt(change[i])=='k' || CurrentFen.charAt(change[i])=='K'){  // ô sqTo là king 
                 sqTo = change[i];
             }else if(oldFen.charAt(change[i])=='k' || oldFen.charAt(change[i])=='K'){
                 sqFrom = change[i];
             }
         }
-        console.log(sqTo);
-        console.log(sqFrom);
+        console.log('TO: ' + sqTo);
+        console.log('FROM: ' + sqFrom);
         if(oldFen.charAt(sqFrom)=='k' & CurrentFen.charAt(sqTo)=='k' & sqFrom ==4 ){
             if(sqTo==6){
                 return "O-O";
@@ -99,11 +99,11 @@ exports.getmove = function(oldFen,CurrentFen){
                 return "O-O-O";
                 // console.log("Move:O-O-O");
             }
-        }else if(oldFen.charAt(sqFrom)=='K' & CurrentFen.charAt(sqTo)=='K' & sqFrom ==60 ){
-            if(sqTo==62){
+        }else if(oldFen.charAt(sqFrom)=='K' & CurrentFen.charAt(sqTo)=='K' & sqFrom ==4 ){
+            if(sqTo==2){
                 return "O-O";
                 // console.log("Move:O-O")
-            }else if(sqTo==58){
+            }else if(sqTo==6){
                 return "O-O-O";
                 // console.log("Move:O-O-O");
             }
