@@ -46,26 +46,18 @@ function Board() {
 
     const baseDbIndex = "ListTour/-N5WSkJ-yqdwA0wAkc41"
     
-    new Promise((resolve, reject) => {
-      const dbRef = ref(db, baseDbIndex)
-      onValue(dbRef, (snapshot) => {
-        setTour(snapshot.val())
-        console.log(snapshot.val())
-        resolve()
-      })
-    }).then(() => {
-      const dbRef2 = ref(db, `${baseDbIndex}/Rounds/${currentRound}/Games/${currentMove}/Fens`)
-      onValue(dbRef2, (snapshot) => {
-        console.log(snapshot.val())
-        setTimeout(function() {
-          if (tour !== undefined
-                && tour.Rounds[currentRound] !== undefined
-                && tour.Rounds[currentRound].Games[currentGame] !== undefined
-                && tour.Rounds[currentRound].Games[currentGame].Fens !== undefined) {
-              document.getElementById("btn-end-move").click()
-            }
-        }, 500)
-      })
+    const dbRef = ref(db, baseDbIndex)
+    onValue(dbRef, (snapshot) => {
+      console.log(snapshot.val())
+      setTour(snapshot.val())
+    })
+    
+    const dbRef2 = ref(db, `${baseDbIndex}/Rounds/${currentRound}/Games/${currentMove}/Fens`)
+    onValue(dbRef2, (snapshot) => {
+      console.log(snapshot.val())
+      setTimeout(function() {
+        document.getElementById("btn-end-move").click()
+      }, 500)
     })
     
     const handle = (event) => {
@@ -102,7 +94,7 @@ function Board() {
       exteractListGame(tour.Rounds);
       setPlayerBlack(bindUserInfo(tour.Rounds[currentRound].Games[currentGame].Black));
       setPlayerWhite(bindUserInfo(tour.Rounds[currentRound].Games[currentGame].White));
-      setResult(getResult(tour.Rounds[currentRound].Games[currentGame].resuft));
+      setResult(getResult(tour.Rounds[currentRound].Games[currentGame].Resuft));
     }
   }, [tour]);
 
@@ -127,7 +119,7 @@ function Board() {
           contai.push({
             white: rounds[i].Games[j].White.Name,
             black: rounds[i].Games[j].Black.Name,
-            result: getResult(rounds[i].Games[j].resuft)
+            result: getResult(rounds[i].Games[j].Resuft)
           });
         } else {
           console.error(`Rounds: ${i} - Games: ${j} does not exist.`)
@@ -251,7 +243,7 @@ function Board() {
     setCurrentMove(crmove);
     setPlayerBlack(bindUserInfo(tour.Rounds[idround].Games[idgame].Black));
     setPlayerWhite(bindUserInfo(tour.Rounds[idround].Games[idgame].White));
-    setResult(getResult(tour.Rounds[idround].Games[idgame].resuft));
+    setResult(getResult(tour.Rounds[idround].Games[idgame].Resuft));
   }
 
   return (
