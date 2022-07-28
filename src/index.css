@@ -554,8 +554,11 @@ h6 {
 }
 
 #content .content-right .header .item {
-    width: 33.33333%;
     padding: 12px 10px;
+}
+
+#content .content-right .header .item:not(:first-child) {
+    width: calc((100% - 50px) / 2);
 }
 
 @media (min-width: 1400px) {
@@ -584,10 +587,18 @@ h6 {
 }
 
 #content .content-right .table-data table tr td {
-    width: 33.33333%;
     color: #b2bcc9;
     padding: 5px;
     border-bottom: 1px solid #b2bcc9;
+}
+
+#content .content-right .table-data table tr td:not(:first-child) {
+    width: calc((100% - 50px) / 2);
+}
+
+#content .content-right .header .item:first-child,
+#content .content-right .table-data table tr td:first-child {
+    width: 50px !important;
 }
 
 @media (min-width: 1400px) {
@@ -601,14 +612,26 @@ h6 {
     }
 }
 
-#content .content-right .table-data table tr td span.active {
+#content .content-right .table-data table tr td p {
+    margin-bottom: 0;
+}
+
+#content .content-right .table-data table tr td p.active {
     color: #fff;
     font-weight: 700;
+}
+
+#content .content-right .table-data table tr td p:hover {
+    cursor: pointer;
+}
+
+#content .content-right .table-data table tr td p.active .name {
     text-decoration: underline;
 }
 
-#content .content-right .table-data table tr td span:hover {
-    cursor: pointer;
+#content .content-right .table-data table tr td .time-move {
+    font-size: 0.75rem;
+    color: #ffb60d;
 }
 
 #content .content-right .score {

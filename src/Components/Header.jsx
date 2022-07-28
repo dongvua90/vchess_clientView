@@ -1,25 +1,43 @@
 import React, { useEffect } from "react"
-import { Alert, Button, Offcanvas, Accordion, Pagination, ButtonGroup } from 'react-bootstrap'
-import { Collapse } from 'bootstrap'
 import equal from 'fast-deep-equal'
 import moment from 'moment'
 
 class Header extends React.Component {
   state = {
-    toggle: false,
     round: 0,
     game: 0,
-    roundCount: 0,
+    listRound: [],
     whiteName: "",
     blackName: "",
+    roundDate: ""
   }
 
   handlerRoundChange = (event) => {
     let value = event.target.value
+    let whiteName = ""
+    try {
+      whiteName = this.props.listGame[value][this.state.game].white
+    } catch {
+
+    }
+    let blackName = ""
+    try {
+      blackName = this.props.listGame[value][this.state.game].black
+    } catch {
+
+    }
+    let roundDate = ""
+    try {
+      roundDate = this.props.listRound[value].Date
+    } catch {
+
+    }
     this.setState({
       round: value,
-      whiteName: this.props.listGame[value][this.state.game].white,
-      blackName: this.props.listGame[value][this.state.game].black,
+      game: 0,
+      whiteName: whiteName,
+      blackName: blackName,
+      roundDate: roundDate
     })
     this.props.changeselectgame(value, this.state.game)  // truyền thông số cho Parent
     event.target.blur()
@@ -39,16 +57,18 @@ class Header extends React.Component {
   componentDidUpdate(prevProps) {
     if (!equal(this.props.listGame, prevProps.listGame)) {
       this.setState({
+        round: this.props.round,
+        game: 0,
         whiteName: this.props.listGame[0][0].white,
         blackName: this.props.listGame[0][0].black,
-        roundCount: this.props.listGame.length,
+        roundDate: this.props.listRound[0].Date
       })
     }
   }
   
   listRound = () => {
     let dat = []
-    for (let i = 0; i < this.state.roundCount; i++) {
+    for (let i = 0; i < this.props.listRound.length; i++) {
       dat.push(<option key={i} value={i}>Round {i + 1}</option>)
     }
     return dat
@@ -56,10 +76,14 @@ class Header extends React.Component {
 
   listGameView = () => {
     let dat = []
-    if (this.state.roundCount > 0) {
-      for (let i = 0; i < this.props.listGame[this.state.round].length; i++) {
-        dat.push(<option key={i} value={i}>{this.props.listGame[this.state.round][i].white} ({this.props.listGame[this.state.round][i].result[0]}) - ({this.props.listGame[this.state.round][i].result[1]}) {this.props.listGame[this.state.round][i].black}</option>)
+    try {
+      if (this.props.listRound.length > 0) {
+        for (let i = 0; i < this.props.listGame[this.state.round].length; i++) {
+          dat.push(<option key={i} value={i}>{this.props.listGame[this.state.round][i].white} ({this.props.listGame[this.state.round][i].result[0]}) - ({this.props.listGame[this.state.round][i].result[1]}) {this.props.listGame[this.state.round][i].black}</option>)
+        }
       }
+    } catch {
+
     }
     return dat
   }
@@ -91,7 +115,7 @@ class Header extends React.Component {
           </div>
         </div>
         <div className="header-right content-right">
-          <p className="label-date">Date: {this.props.tourDate !== "" ? moment(this.props.tourDate).format('YYYY.MM.DD') : ""}</p>
+          <p className="label-date">{this.state.roundDate !== "" ? "Date: " + moment(this.state.roundDate).format('YYYY.MM.DD') : ""}</p>
         </div>
       </header>
     )

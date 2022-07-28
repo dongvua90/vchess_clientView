@@ -1,14 +1,20 @@
 import React from "react"
 
 class ViewMoves extends React.Component {
-  goToMove = (number, iswhite) => {
-    this.props.goToMove(number, iswhite)
+  goToMove = (number, isWhite) => {
+    this.props.goToMove(number, isWhite)
   }
 
   render() {
     let dat = []
     let numberMove = 1
-    for (let i = 0; i < this.props.moves.length; i++) {
+
+    let listMove = []
+    for (let i = 0; i < this.props.listMove.length; i++) {
+      listMove.push(JSON.parse(this.props.listMove[i]))
+    }
+
+    for (let i = 0; i < listMove.length; i++) {
       let cssClassWhite = ""
       let cssClassBlack = ""
       if (this.props.currentMove - 1 === i) {
@@ -18,20 +24,20 @@ class ViewMoves extends React.Component {
         cssClassBlack += " active"
       }
 
-      if (this.props.moves[i + 1] !== undefined) {
+      if (listMove[i + 1] !== undefined) {
         dat.push(
           <tr key={i}>
             <td className="text-center">{numberMove++}.</td>
-            <td className="text-center"><span className={cssClassWhite} onClick={() => this.goToMove(i, 0)}>{this.props.moves[i++]}</span></td>
-            <td className="text-center"><span className={cssClassBlack} onClick={() => this.goToMove(i, 1)}>{this.props.moves[i]}</span></td>
+            <td className="text-center"><p className={cssClassWhite} onClick={() => this.goToMove(i, 0)}><span className="name">{listMove[i].Name}</span> <span className="time-move">{listMove[i++].TimeMove}</span></p></td>
+            <td className="text-center"><p className={cssClassBlack} onClick={() => this.goToMove(i, 1)}><span className="name">{listMove[i].Name}</span> <span className="time-move">{listMove[i].TimeMove}</span></p></td>
           </tr>
         )
       } else {
         dat.push(
           <tr key={i}>
             <td className="text-center">{numberMove++}.</td>
-            <td className="text-center"><span className={cssClassWhite} onClick={() => this.goToMove(i, 0)}>{this.props.moves[i++]}</span></td>
-            <td className="text-center"><span className={cssClassBlack}>---</span></td>
+            <td className="text-center"><p className={cssClassWhite} onClick={() => this.goToMove(i, 0)}><span className="name">{listMove[i].Name}</span> <span className="time-move">{listMove[i++].TimeMove}</span></p></td>
+            <td className="text-center"><p className={cssClassBlack}>---</p></td>
           </tr>
         )
       }
